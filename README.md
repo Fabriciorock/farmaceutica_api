@@ -96,65 +96,34 @@ Todas as regras de negócio estão implementadas na camada service, nunca no rou
 
 # Diagrama ER
 
- ─────────────────┐         ┌──────────────────────┐
-│    PRODUTO      │         │   CONTROLE_QUALIDADE │
-├─────────────────┤         ├──────────────────────┤
-│ id (PK)         │         │ id (PK)              │
-│ nome            │         │ lote_id (FK)         │
-│ categoria       │         │ data_analise         │
-│ fabricante      │         │ responsavel          │
-│ principio_ativo │         │ resultado            │
-│ preco_unitario  │         │ observacoes          │
-│ requer_autori.. │         └──────────┬───────────┘
-└────────┬────────┘                    │ N
-         │ 1                           │
-         │ N                    ┌──────┴───────────┐
-┌────────┴────────┐    N:N      │      LOTE        │
-│      LOTE       ├─────────────┤──────────────────┤
-├─────────────────┤  RECALL_    │ id (PK)          │
-│ id (PK)         │  LOTE       │ produto_id (FK)  │
-│ produto_id (FK) │             │ codigo_lote      │
-│ codigo_lote     │             │ data_fabricacao  │
-│ data_fabricacao │             │ data_validade    │
-│ data_validade   │             │ qtd_produzida    │
-│ qtd_produzida   │             │ status           │
-│ status          │             └──────────────────┘
-└────────┬────────┘
-         │ 1
-         │ N
-┌────────┴────────┐        ┌──────────────────────┐
-│   ITEM_PEDIDO   │        │       PEDIDO         │
-├─────────────────┤        ├──────────────────────┤
-│ id (PK)         │  N     │ id (PK)              │
-│ pedido_id (FK)  ├────────┤ cliente_id (FK)      │
-│ lote_id (FK)    │        │ data_pedido          │
-│ quantidade      │        │ status               │
-│ preco_unit_mom  │        │ valor_total          │
-└─────────────────┘        └──────────┬───────────┘
-                                      │ N
-                                      │ 1
-                            ┌─────────┴───────────┐
-                            │      CLIENTE        │
-                            ├─────────────────────┤
-                            │ id (PK)             │
-                            │ razao_social        │
-                            │ cnpj (UNIQUE)       │ coloquei o CNPJ como UNIQUE pois não pode ter um CNPJ igual a outro
-                            │ tipo                │
-                            │ autorizado_control..│
-                            │ validade_autorizacao│
-                            └─────────────────────┘
-
-┌─────────────────┐
-│     RECALL      │──────── N:N ──────── LOTE (via recall_lote)
-├─────────────────┤
-│ id (PK)         │
-│ motivo          │
-│ descricao       │
-│ data_emissao    │
-└─────────────────┘
+```
+PRODUTO (1) ─────────── (N) LOTE (1) ─────────── (N) CONTROLE_QUALIDADE
+  id PK                       id PK                     id PK
+  nome                         produto_id FK             lote_id FK
+  categoria                    codigo_lote               data_analise
+  fabricante                   data_fabricacao           responsavel
+  principio_ativo              data_validade             resultado
+  preco_unitario               quantidade_produzida      observacoes
+  requer_autorizacao           status
 
 
-(OBS: deu trabalho fazer isso :)
+CLIENTE (1) ─────────── (N) PEDIDO (1) ─────────── (N) ITEM_PEDIDO (N) ─── (1) LOTE
+  id PK                      id PK                       id PK
+  razao_social                cliente_id FK               pedido_id FK
+  cnpj UNIQUE                 data_pedido                 lote_id FK
+  tipo                        status                      quantidade
+  autorizado_controlados      valor_total                 preco_unitario_momento
+  validade_autorizacao
+
+
+RECALL (N) ─── recall_lote ─── (N) LOTE
+  id PK
+  motivo
+  descricao
+  data_emissao
+```
+
+(OBS: tinha feito uma versão mais bonita do diagrama, mas ficou toda desconfigurada no github :)
 
 
 
