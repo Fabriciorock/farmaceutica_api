@@ -139,7 +139,9 @@ e por final é só dá o: docker compose up --build
 
 se apareceu isso aqui: 
  Running upgrade -> 001 - Fundação: produtos, clientes e lotes
+ 
  Running upgrade 001 -> 002 - Camada de vendas
+ 
  Running upgrade 002 -> 003 - Compliance e qualidade
  Application startup complete.
 
